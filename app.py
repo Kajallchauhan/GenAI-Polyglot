@@ -1,8 +1,7 @@
 import os
 import whisper
 import argostranslate.package, argostranslate.translate
-from flask import Flask, request, jsonify, render_template
-import json
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static"
@@ -19,7 +18,6 @@ def ensure_translation_installed(from_code, to_code):
     if from_lang and to_lang:
         return True
 
-    # Try installing the package
     available_packages = argostranslate.package.get_available_packages()
     package_to_install = next(
         (pkg for pkg in available_packages if pkg.from_code == from_code and pkg.to_code == to_code), None
@@ -31,10 +29,15 @@ def ensure_translation_installed(from_code, to_code):
         return True
 
     return False
-@app.route('/', methods=['GET', 'POST'])
-def main():
+
+@app.route('/')
+def landing():
+    return render_template("landing.html")
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
     if request.method == "POST":
-        language = request.form["language"]  # ISO code like 'hi', 'fr', etc.
+        language = request.form["language"]
         file = request.files["file"]
 
         if file:
@@ -42,11 +45,11 @@ def main():
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(filepath)
 
-            # Transcribe with Whisper
+            # Transcribe
             result = model.transcribe(filepath)
             original_text = result["text"]
 
-            # Translate with Argos Translate
+            # Translate
             if ensure_translation_installed("en", language):
                 installed_languages = argostranslate.translate.get_installed_languages()
                 from_lang = next((lang for lang in installed_languages if lang.code == "en"), None)
@@ -60,15 +63,15 @@ def main():
             else:
                 translated_text = "Selected language not available."
 
-            return f"""
-                <h2>Original Text (English):</h2>
-                <p>{original_text}</p>
-                <h2>Translated Text ({language}):</h2>
-                <p>{translated_text}</p>
-                <br><a href="/">Go back</a>
-            """
-    return render_template("index.html")
+            # Pass texts to template
+            return render_template(
+                "index.html",
+                original_text=original_text,
+                translated_text=translated_text,
+                language=language
+            )
 
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=8080)
