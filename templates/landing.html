@@ -3,307 +3,636 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Translator - Get Started</title>
+    <title>Audio Transcriber - Polyglot</title>
     <style>
-        /* Reusing CSS variables and base styles from your provided index.html */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
+        /* General Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #f093fb;
-            --bg-dark: #0f0f23;
-            --bg-light: #1a1a2e;
-            --text-light: #ffffff;
-            --text-muted: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.1);
-            --border-radius: 20px;
-            --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #544a7b 0%, #2f2747 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            color: #fff;
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
-            color: var(--text-light);
-            min-height: 100vh;
-            overflow: hidden; /* Prevent scrollbar for static landing page */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
+        /* Animated Background Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             z-index: 1;
         }
 
-        /* Background Animation - Reused */
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
-            animation: backgroundMove 20s ease-in-out infinite;
-            z-index: -1;
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(172, 137, 255, 0.6); /* Purple-tinted particles */
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
         }
 
-        @keyframes backgroundMove {
-            0%, 100% {
-                transform: translateX(0) translateY(0);
-            }
-            25% {
-                transform: translateX(-10px) translateY(-20px);
-            }
-            50% {
-                transform: translateX(10px) translateY(-10px);
-            }
-            75% {
-                transform: translateX(-5px) translateY(10px);
-            }
+        /* Particle positioning and delay */
+        .particle:nth-child(1) { left: 5%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 15%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 25%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 35%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 45%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 55%; animation-delay: 1.5s; }
+        .particle:nth-child(7) { left: 65%; animation-delay: 2.5s; }
+        .particle:nth-child(8) { left: 75%; animation-delay: 3.5s; }
+        .particle:nth-child(9) { left: 85%; animation-delay: 4.5s; }
+        .particle:nth-child(10) { left: 95%; animation-delay: 5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
         }
 
-        /* Hero Section Styling */
+        /* Floating Geometric Shapes */
+        .shape {
+            position: absolute;
+            opacity: 0.15;
+            animation: floatShape 10s ease-in-out infinite;
+        }
+
+        .shape.circle {
+            width: 80px;
+            height: 80px;
+            background: rgba(172, 137, 255, 0.2); /* Purple-tinted circle */
+            border-radius: 50%;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 60px solid rgba(172, 137, 255, 0.2); /* Purple-tinted triangle */
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .shape.square {
+            width: 60px;
+            height: 60px;
+            background: rgba(172, 137, 255, 0.2); /* Purple-tinted square */
+            top: 30%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        /* Hero Container Styles */
         .hero-container {
-            max-width: 900px;
-            padding: 2rem;
+            background: rgba(47, 39, 71, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 60px 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            max-width: 800px;
+            width: 90%;
             position: relative;
-            z-index: 2; /* Ensure content is above background */
-            animation: fadeInUp 1s ease-out;
+            z-index: 2;
+            text-align: center;
+            transform: translateY(30px);
+            animation: heroEntrance 1s ease-out forwards;
         }
 
-        .hero-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .hero-logo h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .sound-wave { /* Reused from index.html */
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            height: 40px; /* Slightly larger for landing page */
-        }
-
-        .wave { /* Reused from index.html */
-            width: 4px; /* Slightly wider */
-            background: linear-gradient(to top, var(--primary-color), var(--accent-color));
-            border-radius: 4px;
-            animation: wave 1.5s ease-in-out infinite;
-        }
-
-        .wave:nth-child(1) { height: 12px; animation-delay: 0s; }
-        .wave:nth-child(2) { height: 24px; animation-delay: 0.1s; }
-        .wave:nth-child(3) { height: 36px; animation-delay: 0.2s; }
-        .wave:nth-child(4) { height: 24px; animation-delay: 0.3s; }
-        .wave:nth-child(5) { height: 18px; animation-delay: 0.4s; }
-
-        @keyframes wave { /* Reused from index.html */
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.5); }
+        @keyframes heroEntrance {
+            to {
+                transform: translateY(0);
+            }
         }
 
         .hero-title {
-            font-size: 4.5rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-            line-height: 1.1;
-            background: linear-gradient(45deg, var(--text-light), var(--accent-color));
+            font-size: 3.5em;
+            background: linear-gradient(45deg, #ac89ff, #9d4edd, #7b2cbf, #5a189a);
+            background-size: 400% 400%;
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: textGlow 2s ease-in-out infinite alternate;
+            animation: gradientShift 4s ease infinite;
+            margin-bottom: 20px;
+            font-weight: bold;
+            line-height: 1.2;
         }
 
-        @keyframes textGlow {
-            from {
-                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px rgba(255, 255, 255, 0.2);
-            }
-            to {
-                text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--primary-color);
-            }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .hero-subtitle {
-            font-size: 1.8rem;
-            color: var(--text-muted);
-            margin-bottom: 3rem;
+            font-size: 1.4em;
+            color: #eee;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+            line-height: 1.6;
+        }
+
+        .hero-description {
+            font-size: 1.1em;
+            color: #ddd;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1s forwards;
+            line-height: 1.8;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            line-height: 1.5;
-            animation: fadeInUp 1s ease-out 0.2s both;
         }
 
-        .get-started-btn {
-            display: inline-block;
-            padding: 1.5rem 3.5rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: var(--border-radius);
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            animation: pulseButton 2s ease-in-out infinite;
-        }
-
-        .get-started-btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-        }
-
-        .get-started-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Button hover ripple effect */
-        .get-started-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            opacity: 0;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease;
-            z-index: -1;
-        }
-
-        .get-started-btn:hover::after {
-            width: 250px;
-            height: 250px;
-            opacity: 1;
-        }
-
-        @keyframes pulseButton {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-            }
-            70% {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-            }
-        }
-
-        /* General Animations */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .fadeInUp {
+            transform: translateY(30px);
         }
 
-        /* Responsive Design for Landing Page */
+        .cta-button {
+            display: inline-block;
+            padding: 20px 40px;
+            background: linear-gradient(45deg, #9d4edd, #7b2cbf);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(157, 78, 221, 0.4);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.5s forwards;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(157, 78, 221, 0.6);
+            background: linear-gradient(45deg, #7b2cbf, #9d4edd);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Features Grid Styles */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 2s forwards;
+        }
+
+        .feature-card {
+            background: rgba(47, 39, 71, 0.8);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(157, 78, 221, 0.1), rgba(123, 44, 191, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: #9d4edd;
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #eee;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-description {
+            color: #ccc;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Section Styles */
+        .stats-section {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 2.5s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ac89ff, #9d4edd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #ddd;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Pulse Ring Styles */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(172, 137, 255, 0.3); /* Purple-tinted rings */
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 3s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .pulse-ring:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            animation-delay: 1s;
+        }
+
+        .pulse-ring:nth-child(3) {
+            width: 500px;
+            height: 500px;
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .hero-logo h1 {
-                font-size: 2.5rem;
+            .hero-container {
+                padding: 40px 20px;
+                margin: 20px 10px;
             }
+            
             .hero-title {
-                font-size: 3rem;
+                font-size: 2.5em;
             }
+            
             .hero-subtitle {
-                font-size: 1.3rem;
+                font-size: 1.2em;
             }
-            .get-started-btn {
-                padding: 1.2rem 2.5rem;
-                font-size: 1.3rem;
+            
+            .hero-description {
+                font-size: 1em;
             }
-             .wave {
-                width: 3px;
+            
+            .cta-button {
+                padding: 15px 30px;
+                font-size: 1.1em;
             }
-            .wave:nth-child(1) { height: 10px; }
-            .wave:nth-child(2) { height: 20px; }
-            .wave:nth-child(3) { height: 30px; }
-            .wave:nth-child(4) { height: 20px; }
-            .wave:nth-child(5) { height: 15px; }
-            .sound-wave { height: 30px; }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .stats-section {
+                flex-direction: column;
+                gap: 20px;
+            }
         }
 
-        @media (max-width: 480px) {
-            .hero-logo {
-                flex-direction: column;
-                gap: 0.5rem;
+        /* Additional Animations */
+        .bounce-in {
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
             }
-            .hero-logo h1 {
-                font-size: 2rem;
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
             }
-            .hero-title {
-                font-size: 2.5rem;
+            70% {
+                transform: scale(0.9);
             }
-            .hero-subtitle {
-                font-size: 1rem;
-                margin-bottom: 2rem;
+            100% {
+                opacity: 1;
+                transform: scale(1);
             }
-            .get-started-btn {
-                padding: 1rem 2rem;
-                font-size: 1.1rem;
-            }
+        }
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+            position: relative;
+            z-index: 1;
+            color: #ac89ff; /* Purple color for the icon */
+        }
+
+        /* Unique Feature: Real-time Translation */
+        .feature-card.real-time-translation {
+            background: linear-gradient(45deg, rgba(157, 78, 221, 0.2), rgba(123, 44, 191, 0.2));
+            border-color: #9d4edd;
+        }
+
+        .feature-card.real-time-translation .feature-title {
+            color: #fff;
+        }
+
+        .feature-card.real-time-translation .feature-description {
+            color: #eee;
+        }
+
+        /* Unique Feature: Custom Vocabulary */
+        .feature-card.custom-vocabulary {
+            background: linear-gradient(45deg, rgba(157, 78, 221, 0.2), rgba(123, 44, 191, 0.2));
+            border-color: #9d4edd;
+        }
+
+        .feature-card.custom-vocabulary .feature-title {
+            color: #fff;
+        }
+
+        .feature-card.custom-vocabulary .feature-description {
+            color: #eee;
         }
     </style>
 </head>
 <body>
-    <div class="background-animation"></div>
-    
-    <div class="hero-container">
-        <div class="hero-logo">
-            <div class="sound-wave">
-                <div class="wave"></div>
-                <div class="wave"></div>
-                <div class="wave"></div>
-                <div class="wave"></div>
-                <div class="wave"></div>
-            </div>
-            <h1>Audio Translator</h1>
-        </div>
-        <h2 class="hero-title">Break Language Barriers. <br>Hear Your World.</h2>
-        <p class="hero-subtitle">Instantly translate audio files into multiple languages with our advanced AI-powered platform. Fast, accurate, and seamless.</p>
-        <a href="/upload" class="get-started-btn">Get Started</a>
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
+
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+
+    <div class="shape circle"></div>
+    <div class="shape triangle"></div>
+    <div class="shape square"></div>
+
+    <div class="hero-container">
+        <h1 class="hero-title">🎵 Audio Transcriber - Polyglot</h1>
+        <p class="hero-subtitle fadeInUp">Experience AI-Powered Audio Transcription</p>
+        <p class="hero-description fadeInUp">
+            Transform your audio files into accurate text with our advanced AI. Get instant transcriptions and 
+            multi-language support
+        </p>
+        
+        <a href="/app" class="cta-button fadeInUp">
+            ✨ Get Started Now
+        </a>
+        
+        <div class="features-grid fadeInUp">
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">High Accuracy</h3>
+                <p class="feature-description">Advanced AI ensures 95%+ accuracy in transcription</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3 class="feature-title">Lightning Fast</h3>
+                <p class="feature-description">Process hours of audio in just minutes</p>
+            </div>
+            
+             <div class="feature-card real-time-translation">
+                <span class="feature-icon">🔄</span>
+                <h3 class="feature-title">Real-time Translation</h3>
+                <p class="feature-description">Translate transcriptions instantly to multiple languages.</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="feature-icon">🌍</span>
+                <h3 class="feature-title">Multi-Language</h3>
+                <p class="feature-description">Supports 20+ languages with instant translation</p>
+            </div>
+            
+            <div class="feature-card custom-vocabulary">
+                <span class="feature-icon">📚</span>
+                <h3 class="feature-title">Custom Vocabulary</h3>
+                <p class="feature-description">Improve accuracy with custom vocabulary for specific terms.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🔒</span>
+                <h3 class="feature-title">Secure & Private</h3>
+                <p class="feature-description">Your files are processed securely and deleted after use</p>
+            </div>
+        </div>
+        
+        <div class="stats-section fadeInUp">
+            <div class="stat-item">
+                <span class="stat-number">20+</span>
+                <span class="stat-label">Languages</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">95%</span>
+                <span class="stat-label">Accuracy</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">10x</span>
+                <span class="stat-label">Faster</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced particle interactions
+        document.addEventListener('mousemove', function(e) {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = (index + 1) * 0.0005;
+                const x = e.clientX * speed;
+                const y = e.clientY * speed;
+                particle.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Add entrance animations to feature cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'bounceIn 0.8s ease-out forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // CTA button click animation
+        document.querySelector('.cta-button').addEventListener('click', function(e) {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-3px)';
+            }, 150);
+        });
+
+        // Dynamic stats counter animation
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                if (element.textContent.includes('%')) {
+                    element.textContent = Math.floor(current) + '%';
+                } else if (element.textContent.includes('x')) {
+                    element.textContent = Math.floor(current) + 'x';
+                } else {
+                    element.textContent = Math.floor(current) + '+';
+                }
+            }, 16);
+        }
+
+        // Trigger counter animations when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        animateCounter(document.querySelector('.stat-item:nth-child(1) .stat-number'), 20);
+                        animateCounter(document.querySelector('.stat-item:nth-child(2) .stat-number'), 95);
+                        animateCounter(document.querySelector('.stat-item:nth-child(3) .stat-number'), 10);
+                    }, 500);
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Add floating animation to shapes
+        document.querySelectorAll('.shape').forEach((shape, index) => {
+            shape.addEventListener('mouseenter', function() {
+                this.style.animation = 'floatShape 2s ease-in-out infinite';
+                this.style.opacity = '0.3';
+            });
+            
+            shape.addEventListener('mouseleave', function() {
+                this.style.animation = 'floatShape 10s ease-in-out infinite';
+                this.style.opacity = '0.1';
+            });
+        });
+    </script>
 </body>
 </html>

@@ -3,681 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Translator</title>
+    <title>Audio Transcription & Translation - Purple Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Audio Translator CSS */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #f093fb;
-            --bg-dark: #0f0f23;
-            --bg-light: #1a1a2e;
-            --text-light: #ffffff;
-            --text-muted: #a0a0a0;
-            --card-bg: rgba(255, 255, 255, 0.1);
-            --border-radius: 20px;
-            --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
-            color: var(--text-light);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Background Animation */
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
-            animation: backgroundMove 20s ease-in-out infinite;
-            z-index: -1;
-        }
-
-        @keyframes backgroundMove {
-            0%, 100% {
-                transform: translateX(0) translateY(0);
-            }
-            25% {
-                transform: translateX(-10px) translateY(-20px);
-            }
-            50% {
-                transform: translateX(10px) translateY(-10px);
-            }
-            75% {
-                transform: translateX(-5px) translateY(10px);
-            }
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .logo h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            font-weight: 300;
-        }
-
-        /* Sound Wave Animation */
-        .sound-wave {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            height: 30px;
-        }
-
-        .wave {
-            width: 3px;
-            background: linear-gradient(to top, var(--primary-color), var(--accent-color));
-            border-radius: 3px;
-            animation: wave 1.5s ease-in-out infinite;
-        }
-
-        .wave:nth-child(1) { height: 10px; animation-delay: 0s; }
-        .wave:nth-child(2) { height: 20px; animation-delay: 0.1s; }
-        .wave:nth-child(3) { height: 30px; animation-delay: 0.2s; }
-        .wave:nth-child(4) { height: 20px; animation-delay: 0.3s; }
-        .wave:nth-child(5) { height: 15px; animation-delay: 0.4s; }
-
-        @keyframes wave {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.5); }
-        }
-
-        /* Translator Card */
-        .translator-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border-radius: var(--border-radius);
-            padding: 2.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-            transition: var(--transition);
-        }
-
-        .translator-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-        }
-
-        .card-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .icon-container {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border-radius: 50%;
-            margin-bottom: 1rem;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .microphone-icon {
-            width: 40px;
-            height: 40px;
-            color: white;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .card-header h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        /* Form Styling */
-        .upload-form {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .file-label {
-            cursor: pointer;
-            display: block;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-upload-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 2rem;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            border-radius: var(--border-radius);
-            background: rgba(255, 255, 255, 0.05);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
-        }
-
-        .file-upload-area.drag-over {
-            border-color: var(--accent-color);
-            background: rgba(240, 147, 251, 0.1);
-            transform: scale(1.05);
-        }
-
-        .file-upload-area.file-selected {
-            border-color: #4ade80;
-            background: rgba(74, 222, 128, 0.1);
-        }
-
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .upload-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .upload-text {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-subtext {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        /* Select Styling */
-        .select-label {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .select-container {
-            position: relative;
-        }
-
-        .language-select {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            padding-right: 3rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--border-radius);
-            color: var(--text-light);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-        }
-
-        .language-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-        }
-
-        .language-select:hover {
-            border-color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .language-select option {
-            background: var(--bg-light);
-            color: var(--text-light);
-            padding: 0.5rem;
-        }
-
-        .select-arrow {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: var(--text-muted);
-            pointer-events: none;
-            transition: var(--transition);
-        }
-
-        .language-select:focus + .select-arrow {
-            color: var(--primary-color);
-            transform: translateY(-50%) rotate(180deg);
-        }
-
-        /* Button Styling */
-        .translate-btn {
-            padding: 1.25rem 2rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: var(--border-radius);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            margin-top: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .translate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .translate-btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-text {
-            transition: var(--transition);
-        }
-
-        .btn-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .translate-btn.loading .btn-text {
-            opacity: 0;
-        }
-
-        .translate-btn.loading .btn-loader {
-            opacity: 1;
-        }
-
-        .loader-dot {
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: bounce 1.4s ease-in-out infinite;
-        }
-
-        .loader-dot:nth-child(1) { animation-delay: -0.32s; }
-        .loader-dot:nth-child(2) { animation-delay: -0.16s; }
-        .loader-dot:nth-child(3) { animation-delay: 0s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        /* Features Section */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-item {
-            text-align: center;
-            padding: 2rem 1rem;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: var(--transition);
-            animation: fadeInUp 0.8s ease-out 0.4s both;
-        }
-
-        .feature-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .feature-item:nth-child(2) {
-            animation-delay: 0.5s;
-        }
-
-        .feature-item:nth-child(3) {
-            animation-delay: 0.6s;
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            animation: rotate 4s ease-in-out infinite;
-        }
-
-        .feature-item h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-light);
-        }
-
-        .feature-item p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        @keyframes rotate {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive Design */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #544a7b 0%, #2f2747 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow-x: hidden; color: #fff; padding: 20px 0;}
+        .particles { position: absolute; width: 100%; height: 100%; overflow: hidden; z-index: 1; top: 0; left: 0;}
+        .particle { position: absolute; width: 4px; height: 4px; background: rgba(172, 137, 255, 0.8); border-radius: 50%; animation: float 6s ease-in-out infinite; }
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; } .particle:nth-child(2) { left: 20%; animation-delay: 1s; } .particle:nth-child(3) { left: 30%; animation-delay: 2s; } .particle:nth-child(4) { left: 40%; animation-delay: 3s; } .particle:nth-child(5) { left: 50%; animation-delay: 4s; } .particle:nth-child(6) { left: 60%; animation-delay: 1.5s; } .particle:nth-child(7) { left: 70%; animation-delay: 2.5s; } .particle:nth-child(8) { left: 80%; animation-delay: 3.5s; } .particle:nth-child(9) { left: 90%; animation-delay: 4.5s; }
+        @keyframes float { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100px) rotate(360deg); opacity: 0; } }
+        .container { background: rgba(47, 39, 71, 0.95); backdrop-filter: blur(15px); border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); max-width: 900px; width: 95%; position: relative; z-index: 2; transform: translateY(20px); animation: slideUp 0.8s ease-out forwards; opacity: 0;}
+        @keyframes slideUp { to { transform: translateY(0); opacity: 1;} }
+        .header { text-align: center; margin-bottom: 30px; position: relative; }
+        .title { font-size: 2.5em; background: linear-gradient(45deg, #ac89ff, #9d4edd, #7b2cbf, #5a189a); background-size: 400% 400%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShift 3s ease infinite; margin-bottom: 10px; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .subtitle { color: #ddd; font-size: 1.1em; opacity: 0; animation: fadeIn 1s ease 0.5s forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .form-group { margin-bottom: 25px; position: relative; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #eee; font-size: 1.1em; }
+        .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-input { position: absolute; left: -9999px; opacity: 0; }
+        .file-input-button { display: block; width: 100%; padding: 15px; background: linear-gradient(45deg, #ac89ff, #9d4edd); color: white; text-align: center; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; font-size: 1.1em; font-weight: 600; border: none; box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4); }
+        .file-input-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6); background: linear-gradient(45deg, #9d4edd, #ac89ff); }
+        .select-wrapper { position: relative; }
+        .select { width: 100%; padding: 15px; border: 2px solid #ac89ff; border-radius: 10px; font-size: 1.1em; background: rgba(47, 39, 71, 0.8); color: #eee; cursor: pointer; transition: all 0.3s ease; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23eee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 20px; }
+        .submit-btn { width: 100%; padding: 15px; background: linear-gradient(45deg, #9d4edd, #7b2cbf); color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4); position: relative; overflow: hidden; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6); background: linear-gradient(45deg, #7b2cbf, #9d4edd); }
+        .loading-spinner { display: none; margin: 20px auto; width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid #ac89ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .file-selected { background: linear-gradient(45deg, #7b2cbf, #9d4edd) !important; animation: successPulse 0.6s ease-out; }
+        @keyframes successPulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .results-container { animation: slideUp 0.8s ease-out forwards; }
+        .result-section { margin-bottom: 25px; }
+        .result-title { font-size: 1.5em; margin-bottom: 15px; background: linear-gradient(45deg, #ac89ff, #9d4edd); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; text-align: center; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .result-box { background: rgba(47, 39, 71, 0.9); border-radius: 15px; padding: 20px; margin: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border: 2px solid transparent; transition: all 0.3s ease; position: relative; overflow: hidden; height: 100%; }
+        .original-text { border-left: 4px solid #9d4edd; background: linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(47, 39, 71, 0.9)); }
+        .translated-text { border-left: 4px solid #7b2cbf; background: linear-gradient(135deg, rgba(123, 44, 191, 0.1), rgba(47, 39, 71, 0.9)); }
+        .language-flag { font-size: 0.9em; color: #ddd; margin-bottom: 10px; font-weight: 600; opacity: 0.8; }
+        .result-text { font-size: 1.1em; line-height: 1.6; color: #eee; margin: 0; word-wrap: break-word; }
+        .action-buttons { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { padding: 12px 24px; border: none; border-radius: 25px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative; overflow: hidden; }
+        .copy-btn { background: linear-gradient(45deg, #ac89ff, #9d4edd); color: white; box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4); }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6); background: linear-gradient(45deg, #9d4edd, #ac89ff); }
+        .back-btn { background: linear-gradient(45deg, #7b2cbf, #9d4edd); color: white; box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4); }
+        .back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(123, 44, 191, 0.6); background: linear-gradient(45deg, #9d4edd, #7b2cbf); }
+        .copy-success { background: linear-gradient(45deg, #9d4edd, #ac89ff) !important; color: white !important; }
+        .copy-success::after { content: ' ✓'; }
+        .performance-report { background: linear-gradient(135deg, rgba(84, 74, 123, 0.2), rgba(47, 39, 71, 0.2)); border-radius: 15px; padding: 25px; margin-top: 20px; grid-column: span 2; border-left: 4px solid #ac89ff; backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .performance-report h3 { text-align: center; font-size: 1.4em; margin-bottom: 25px; color: #eee; font-weight: 600; }
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .metric-item { background: rgba(30, 25, 50, 0.6); padding: 20px 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(172, 137, 255, 0.2); transition: all 0.3s ease; }
+        .metric-item:hover { transform: translateY(-5px); background: rgba(47, 39, 71, 0.8); border-color: rgba(172, 137, 255, 0.5); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .metric-label { font-size: 0.9em; font-weight: 500; display: block; margin-bottom: 10px; color: #d1c4e9; }
+        .metric-value { font-size: 1.6em; font-weight: 700; color: #fff; text-shadow: 0 0 8px rgba(172, 137, 255, 0.5); }
+        .overall-metric { background: linear-gradient(45deg, #9d4edd, #7b2cbf); padding: 25px; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .overall-metric .metric-label { font-size: 1.1em; color: #fff; font-weight: 600; }
+        .overall-metric .metric-value { font-size: 2.2em; }
+        .chart-container { grid-column: span 2; margin-top: 20px; min-height: 400px; position: relative;}
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .logo h1 {
-                font-size: 2rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .translator-card {
-                padding: 2rem;
-            }
-            
-            .file-upload-area {
-                padding: 2rem 1rem;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .feature-item {
-                padding: 1.5rem 1rem;
-            }
+            .results-grid { grid-template-columns: 1fr; }
+            .performance-report { grid-column: span 1; }
         }
-
-        @media (max-width: 480px) {
-            .logo {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .logo h1 {
-                font-size: 1.8rem;
-            }
-            
-            .translator-card {
-                padding: 1.5rem;
-            }
-            
-            .upload-form {
-                gap: 1.5rem;
-            }
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-dark);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(to bottom, var(--secondary-color), var(--accent-color));
+        @media (max-width: 600px) {
+            .metrics-grid { grid-template-columns: 1fr; }
+            .chart-container { grid-column: span 1; }
         }
     </style>
 </head>
 <body>
+    <div class="particles">
+        <!-- particles -->
+    </div>
     <div class="container">
-        <div class="background-animation"></div>
+        <div class="header">
+             <h1 class="title">🎵 Audio Transcriber</h1>
+            <p class="subtitle">Transform your audio into text and translate it instantly</p>
+        </div>
         
-        <header class="header">
-            <div class="logo">
-                <div class="sound-wave">
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                </div>
-                <h1>Audio Translator</h1>
-            </div>
-            <p class="subtitle">Transform your voice across languages</p>
-        </header>
+        {% if not original_text %}
+        
+        <form method="POST" action="/app" enctype="multipart/form-data" id="transcribeForm">
+            <!-- Form fields -->
+            <div class="form-group"><label for="language">🌍 Select Target Language:</label><div class="select-wrapper"><select name="language" id="language" class="select" required><option value="">Choose a language...</option><option value="es">🇪🇸 Spanish</option><option value="fr">🇫🇷 French</option><option value="de">🇩🇪 German</option><option value="it">🇮🇹 Italian</option><option value="pt">🇵🇹 Portuguese</option><option value="ru">🇷🇺 Russian</option><option value="ja">🇯🇵 Japanese</option><option value="ko">🇰🇷 Korean</option><option value="zh">🇨🇳 Chinese</option><option value="ar">🇸🇦 Arabic</option><option value="hi">🇮🇳 Hindi</option><option value="te">🇮🇳 Telugu</option><option value="ml">🇮🇳 Malayalam</option><option value="ta">🇮🇳 Tamil</option><option value="kn">🇮🇳 Kannada</option><option value="nl">🇳🇱 Dutch</option><option value="sv">🇸🇪 Swedish</option><option value="no">🇳🇴 Norwegian</option><option value="da">🇩🇰 Danish</option><option value="fi">🇫🇮 Finnish</option><option value="pl">🇵🇱 Polish</option><option value="cs">🇨🇿 Czech</option><option value="hu">🇭🇺 Hungarian</option><option value="tr">🇹🇷 Turkish</option></select></div></div>
+            <div class="form-group"><label for="file">🎤 Upload Audio File:</label><div class="file-input-wrapper"><input type="file" name="file" id="file" class="file-input" accept="audio/*" required><label for="file" class="file-input-button" id="fileLabel">Choose Audio File</label></div></div>
+            <button type="submit" class="submit-btn" id="submitBtn">✨ Transcribe & Translate</button>
+        </form>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        
+        {% else %}
 
-        <div class="translator-card">
-            <div class="card-header">
-                <div class="icon-container">
-                    <svg class="microphone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/>
-                        <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
-                        <line x1="12" y1="19" x2="12" y2="23"/>
-                        <line x1="8" y1="23" x2="16" y2="23"/>
-                    </svg>
-                </div>
-                <h2>Upload & Translate Audio</h2>
-            </div>
+        <div class="results-container">
+            <h2 class="result-title">📝 Transcription & Translation</h2>
+            <div class="results-grid">
+                <div class="result-section"><div class="result-box original-text"><div class="language-flag">🇺🇸 English</div><p class="result-text">{{ original_text }}</p></div></div>
+                <div class="result-section"><div class="result-box translated-text"><div class="language-flag">{{ language_flag }} {{ language_name }}</div><p class="result-text">{{ translated_text }}</p></div></div>
+                {% if audio_url %}<div class="result-section" style="grid-column: span 2; text-align: center;"><div class="result-box"><div class="language-flag">🔊 Listen to Translated Audio</div><audio controls autoplay style="width: 100%;"><source src="{{ audio_url }}" type="audio/mpeg">Your browser does not support the audio element.</audio></div></div>{% endif %}
 
-            <form class="upload-form" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label class="file-label">
-                        <input type="file" name="file" accept="audio/*" required class="file-input">
-                        <div class="file-upload-area">
-                            <div class="upload-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="7,10 12,15 17,10"/>
-                                    <line x1="12" y1="15" x2="12" y2="3"/>
-                                </svg>
-                            </div>
-                            <span class="upload-text">Click to select audio file</span>
-                            <span class="upload-subtext">or drag and drop</span>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label class="select-label">Target Language</label>
-                    <div class="select-container">
-                        <select name="language" required class="language-select">
-                            <option value="">Choose a language</option>
-                            <option value="hi">🇮🇳 Hindi</option>
-                            <option value="fr">🇫🇷 French</option>
-                            <option value="es">🇪🇸 Spanish</option>
-                            <option value="de">🇩🇪 German</option>
-                            <option value="ta">🇮🇳 Tamil</option>
-                            <option value="te">🇮🇳 Telugu</option>
-                            <option value="zh">🇨🇳 Chinese</option>
-                            <option value="ja">🇯🇵 Japanese</option>
-                            <option value="bn">🇧🇩 Bengali</option>
-                        </select>
-                        <div class="select-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6,9 12,15 18,9"/>
-                            </svg>
-                        </div>
+                <div class="performance-report">
+                    <h3>📊 Performance Report</h3>
+                    <div class="metrics-grid">
+                        <!-- Displaying the data from the chart_data object -->
+                        <div class="metric-item overall-metric"><span class="metric-label">⭐ Overall Process Accuracy</span><span class="metric-value">{{ "%.2f"|format(chart_data.overall_accuracy) }}%</span></div>
+                        <div class="metric-item overall-metric"><span class="metric-label">⏱️ Overall Process Time</span><span class="metric-value">{{ "%.2f"|format(chart_data.overall_time) }}s</span></div>
+                        <div class="metric-item"><span class="metric-label">🎙️ Transcription Confidence</span><span class="metric-value">{{ "%.2f"|format(chart_data.transcription_confidence) }}%</span></div>
+                        <div class="metric-item"><span class="metric-label">🌐 Translation Confidence</span><span class="metric-value">{{ chart_data.translation_confidence }}%</span></div>
+                        <div class="metric-item"><span class="metric-label">🎙️ Transcription Time</span><span class="metric-value">{{ "%.2f"|format(chart_data.transcription_time) }}s</span></div>
+                        <div class="metric-item"><span class="metric-label">🌐 Translation Time</span><span class="metric-value">{{ "%.2f"|format(chart_data.translation_time) }}s</span></div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="metricsChart"></canvas>
                     </div>
                 </div>
 
-                <button type="submit" class="translate-btn">
-                    <span class="btn-text">Translate Audio</span>
-                    <div class="btn-loader">
-                        <div class="loader-dot"></div>
-                        <div class="loader-dot"></div>
-                        <div class="loader-dot"></div>
-                    </div>
-                </button>
-            </form>
-        </div>
-
-        <div class="features">
-            <div class="feature-item">
-                <div class="feature-icon">⚡</div>
-                <h3>Lightning Fast</h3>
-                <p>Quick processing and translation</p>
             </div>
-            <div class="feature-item">
-                <div class="feature-icon">🌍</div>
-                <h3>Multi-Language</h3>
-                <p>Support for 9 major languages</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">🎯</div>
-                <h3>High Accuracy</h3>
-                <p>Advanced AI-powered translation</p>
+            <div class="action-buttons">
+                 <button onclick="copyToClipboard('original', event)" class="action-btn copy-btn">📋 Copy Original</button>
+                 <button onclick="copyToClipboard('translated', event)" class="action-btn copy-btn">📋 Copy Translation</button>
+                 <a href="/app" class="action-btn back-btn">🔄 Transcribe Another</a>
             </div>
         </div>
+        
+        {% endif %}
     </div>
 
     <script>
-        // File upload interaction
-        const fileInput = document.querySelector('.file-input');
-        const uploadArea = document.querySelector('.file-upload-area');
-        const uploadText = document.querySelector('.upload-text');
-        const translateBtn = document.querySelector('.translate-btn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileInput = document.getElementById('file');
+            const fileLabel = document.getElementById('fileLabel');
+            const form = document.getElementById('transcribeForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
 
-        fileInput.addEventListener('change', function(e) {
-            if (e.target.files.length > 0) {
-                uploadText.textContent = e.target.files[0].name;
-                uploadArea.classList.add('file-selected');
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        fileLabel.textContent = `Selected: ${e.target.files[0].name}`;
+                        fileLabel.classList.add('file-selected');
+                    }
+                });
+            }
+
+            if (form) {
+                form.addEventListener('submit', () => {
+                    if (submitBtn) submitBtn.style.display = 'none';
+                    if (loadingSpinner) loadingSpinner.style.display = 'block';
+                });
             }
         });
+        
+        function copyToClipboard(type, event) { /* ... copy function ... */ }
 
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            uploadArea.classList.add('drag-over');
-        });
+        // ✅ --- THIS IS THE BULLETPROOF FIX --- ✅
+        {% if chart_data %}
+        // The |tojson filter safely converts the Python dictionary to a JavaScript object.
+        // This is clean, safe, and will not cause any linter or browser errors.
+        const chartDataFromServer = {{ chart_data|tojson }};
 
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('drag-over');
-        });
-
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('drag-over');
-            if (e.dataTransfer.files.length > 0) {
-                fileInput.files = e.dataTransfer.files;
-                uploadText.textContent = e.dataTransfer.files[0].name;
-                uploadArea.classList.add('file-selected');
+        const ctx = document.getElementById('metricsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Overall Accuracy (%)', 'Transcription Confidence (%)', 'Translation Confidence (%)', 'Overall Time (s)', 'Transcription Time (s)', 'Translation Time (s)', 'Audio Generation Time (s)'],
+                datasets: [{
+                    label: 'Performance Metrics',
+                    // Read the data from our clean JavaScript object
+                    data: [
+                        chartDataFromServer.overall_accuracy,
+                        chartDataFromServer.transcription_confidence,
+                        chartDataFromServer.translation_confidence,
+                        chartDataFromServer.overall_time,
+                        chartDataFromServer.transcription_time,
+                        chartDataFromServer.translation_time,
+                        chartDataFromServer.gtts_time
+                    ],
+                    fill: true,
+                    backgroundColor: 'rgba(172, 137, 255, 0.2)',
+                    borderColor: 'rgb(172, 137, 255)',
+                    pointBackgroundColor: 'rgb(172, 137, 255)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(172, 137, 255)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                        pointLabels: { color: '#fff', font: { size: 11 } },
+                        ticks: { color: '#fff', backdropColor: 'rgba(0, 0, 0, 0)', beginAtZero: true }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#fff' } }
+                }
             }
         });
-
-        // Button loading animation
-        translateBtn.addEventListener('click', function() {
-            if (fileInput.files.length > 0 && document.querySelector('.language-select').value) {
-                translateBtn.classList.add('loading');
-                setTimeout(() => {
-                    translateBtn.classList.remove('loading');
-                }, 3000);
-            }
-        });
+        {% endif %}
     </script>
 </body>
 </html>
